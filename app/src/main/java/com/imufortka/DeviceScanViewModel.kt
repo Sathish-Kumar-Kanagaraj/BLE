@@ -30,19 +30,20 @@ class DeviceScanViewModel(app: Application) : AndroidViewModel(app) {
 
     private var scannCallback: DeviceScanCallback? = null
 
-    private val scanFilters: List<ScanFilter>
+    private var scanFilters: List<ScanFilter>?=null
 
-    private val scanSettings: ScanSettings
+    private var scanSettings: ScanSettings?=null
 
-    init {
-        scanFilters = buildScanFilters()
-        scanSettings = buildScanSettings()
+  /*  init {
 
         startScan()
-    }
+    }*/
 
 
     fun startScan() {
+        scanFilters = buildScanFilters()
+        scanSettings = buildScanSettings()
+
         if (scannCallback == null) {
             Log.d(TAG, "Start Scanning")
             scanner = adapter.bluetoothLeScanner

@@ -24,8 +24,8 @@ class PodScanActivity : AppCompatActivity() {
         BluetoothServer.setCurrentChatConnection(device)
     }
 
-    private val messageObserver= Observer<Message> {message->
-        Toast.makeText(this,message.text,Toast.LENGTH_LONG).show()
+    private val messageObserver = Observer<Message> { message ->
+        Toast.makeText(this, message.text, Toast.LENGTH_LONG).show()
     }
 
     private val viewStateObserver = Observer<DeviceScanViewState> { state ->
@@ -39,10 +39,12 @@ class PodScanActivity : AppCompatActivity() {
     private val deviceConnectionObserver = Observer<DeviceConnectionState> { state ->
         when (state) {
             is DeviceConnectionState.Connected -> {
+                activityPodScanBinding.progressbar.visibility = View.GONE
                 val device = state.device
                 Toast.makeText(this, "Device Connected" + device, Toast.LENGTH_LONG).show()
             }
             is DeviceConnectionState.Disconnected -> {
+                activityPodScanBinding.progressbar.visibility = View.GONE
                 Toast.makeText(this, "Device Disconnected", Toast.LENGTH_LONG).show()
             }
         }
@@ -59,6 +61,7 @@ class PodScanActivity : AppCompatActivity() {
         val view = activityPodScanBinding.root
         setContentView(view)
 
+        viewModel = ViewModelProvider(this).get(DeviceScanViewModel::class.java)
 
         activityPodScanBinding.buttonScan1.setOnClickListener({
             val intent = Intent(this, BarCodeScanActivity::class.java)
@@ -69,30 +72,48 @@ class PodScanActivity : AppCompatActivity() {
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         if (resultCode == Activity.RESULT_OK && requestCode == REQUEST_CODE) {
+            activityPodScanBinding.progressbar.visibility = View.VISIBLE
             Toast.makeText(this, App.getStringPrefernce(Constants.BARCODE1, ""), Toast.LENGTH_LONG)
                 .show()
-            viewModel = ViewModelProvider(this).get(DeviceScanViewModel::class.java)
             viewModel.viewState.observe(this, viewStateObserver)
-
+            viewModel.startScan()
             BluetoothServer.startServer(application)
         }
     }
 
     private fun showLoading() {
-        Toast.makeText(this, "Data is loading", Toast.LENGTH_LONG).show()
+        activityPodScanBinding.progressbar.visibility = View.VISIBLE
     }
 
 
     private fun showResults(scanResults: Map<String, BluetoothDevice>) {
         if (!scanResults.values.toList().isEmpty()) {
-
+          //  activityPodScanBinding.progressbar.visibility = View.GONE
+            activityPodScanBinding.progressbar.visibility = View.VISIBLE
+            bluetoothDevice = scanResults.values.toList().get(0)
+            Toast.makeText(this,"Connected with"+scanResults.values.toList().get(0).name,Toast.LENGTH_LONG).show()
+            BluetoothServer.setCurrentChatConnection(bluetoothDevice)
+            var userChoices="00011100"
+            BluetoothServer.sendMessage(userChoices)
         }
     }
 
     private fun showError(message: String) {
+        activityPodScanBinding.progressbar.visibility = View.GONE
         Toast.makeText(this, "Error:" + message, Toast.LENGTH_LONG).show()
     }
 
 
+    override fun onStart() {
+        super.onStart()
+        BluetoothServer.connectionRequest.observe(this, connectionRequestObserver)
+        BluetoothServer.deviceConnection.observe(this, deviceConnectionObserver)
+        BluetoothServer.messages.observe(this, messageObserver)
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        BluetoothServer.stopServer()
+    }
 
 }

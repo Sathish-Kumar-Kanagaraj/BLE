@@ -28,9 +28,9 @@ object BluetoothServer {
 
     private var advertiseCallback: AdvertiseCallback? = null
 
-    private var advertiseSettings: AdvertiseSettings = buildAdvertiseSettings()
+    /*private var advertiseSettings: AdvertiseSettings = buildAdvertiseSettings()
 
-    private var advertiseData: AdvertiseData = buildAdvertiseData()
+    private var advertiseData: AdvertiseData = buildAdvertiseData()*/
 
     private var currentDevice: BluetoothDevice? = null
 
@@ -130,6 +130,8 @@ object BluetoothServer {
 
     private fun startAdvertisement() {
         advertiser = adapter.bluetoothLeAdvertiser
+       var advertiseSettings=buildAdvertiseSettings()
+       var advertiseData= buildAdvertiseData()
         Log.d(TAG, "startAdvertisement: with advertiser $advertiser")
 
         if (advertiseCallback == null) {
