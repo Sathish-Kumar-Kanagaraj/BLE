@@ -1,0 +1,205 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <TextView
+        android:id="@+id/text_topline"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        android:text="Chose from the below options"
+        android:textColor="@color/black"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+    </TextView>
+
+    <TextView
+        android:id="@+id/text_hip"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:text="1) Hip/Knee"
+        android:textColor="@color/black"
+        android:textSize="18sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="@+id/text_topline"
+        app:layout_constraintTop_toBottomOf="@+id/text_topline">
+
+    </TextView>
+
+    <RadioGroup
+        android:id="@+id/radio_group_hip"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:orientation="horizontal"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="@id/text_hip"
+        app:layout_constraintTop_toBottomOf="@+id/text_hip">
+
+        <androidx.appcompat.widget.AppCompatRadioButton
+            android:id="@+id/radio_button_hip"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:checked="true"
+            android:text="Hip">
+
+        </androidx.appcompat.widget.AppCompatRadioButton>
+
+        <androidx.appcompat.widget.AppCompatRadioButton
+            android:id="@+id/radio_button_knee"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="24dp"
+            android:text="Knee">
+
+        </androidx.appcompat.widget.AppCompatRadioButton>
+    </RadioGroup>
+
+    <TextView
+        android:id="@+id/text_uni"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:text="2) Uni/Bilateral"
+        android:textColor="@color/black"
+        android:textSize="18sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="@+id/radio_group_hip"
+        app:layout_constraintTop_toBottomOf="@+id/radio_group_hip">
+
+    </TextView>
+
+    <RadioGroup
+        android:id="@+id/radio_group_uni"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:orientation="horizontal"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="@id/text_hip"
+        app:layout_constraintTop_toBottomOf="@+id/text_uni">
+
+        <androidx.appcompat.widget.AppCompatRadioButton
+            android:id="@+id/radio_button_uni"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:checked="true"
+            android:text="Uni">
+
+        </androidx.appcompat.widget.AppCompatRadioButton>
+
+        <androidx.appcompat.widget.AppCompatRadioButton
+            android:id="@+id/radio_button_bilateral"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="24dp"
+            android:text="Bilateral">
+
+        </androidx.appcompat.widget.AppCompatRadioButton>
+    </RadioGroup>
+
+    <TextView
+        android:id="@+id/text_left"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:text="3) Left/Right"
+        android:textColor="@color/black"
+        android:textSize="18sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="@+id/radio_group_uni"
+        app:layout_constraintTop_toBottomOf="@+id/radio_group_uni">
+
+    </TextView>
+
+    <RadioGroup
+        android:id="@+id/radio_group_left"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:orientation="horizontal"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="@id/text_left"
+        app:layout_constraintTop_toBottomOf="@+id/text_left">
+
+        <androidx.appcompat.widget.AppCompatRadioButton
+            android:id="@+id/radio_button_left"
+            android:layout_width="wrap_content"
+            android:checked="true"
+            android:layout_height="wrap_content"
+            android:text="Left">
+
+        </androidx.appcompat.widget.AppCompatRadioButton>
+
+        <androidx.appcompat.widget.AppCompatRadioButton
+            android:id="@+id/radio_button_right"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="24dp"
+            android:text="Right">
+
+        </androidx.appcompat.widget.AppCompatRadioButton>
+    </RadioGroup>
+
+    <TextView
+        android:id="@+id/text_tibla"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:text="4) Tible/Femur"
+        android:textColor="@color/black"
+        android:textSize="18sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="@+id/radio_group_left"
+        app:layout_constraintTop_toBottomOf="@+id/radio_group_left">
+
+    </TextView>
+
+    <RadioGroup
+        android:id="@+id/radio_group_tible"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:orientation="horizontal"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="@id/text_tibla"
+        app:layout_constraintTop_toBottomOf="@+id/text_tibla">
+
+        <androidx.appcompat.widget.AppCompatRadioButton
+            android:id="@+id/radio_button_tible"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:checked="true"
+            android:text="Tible">
+
+        </androidx.appcompat.widget.AppCompatRadioButton>
+
+        <androidx.appcompat.widget.AppCompatRadioButton
+            android:id="@+id/radio_button_femur"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="24dp"
+            android:text="Femur">
+
+        </androidx.appcompat.widget.AppCompatRadioButton>
+    </RadioGroup>
+
+    <Button
+        android:id="@+id/button_submit"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:text="Submit"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/radio_group_tible">
+
+    </Button>
+</androidx.constraintlayout.widget.ConstraintLayout>
