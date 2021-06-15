@@ -188,12 +188,12 @@ object BluetoothServer {
         )
         service.addCharacteristic(messageCharacteristic)
 
-        val confirmCharacteristic = BluetoothGattCharacteristic(
+      /*  val confirmCharacteristic = BluetoothGattCharacteristic(
             Constants.CONFIRM_UUID,
             BluetoothGattCharacteristic.PROPERTY_WRITE,
             BluetoothGattCharacteristic.PERMISSION_WRITE
         )
-        service.addCharacteristic(confirmCharacteristic)
+        service.addCharacteristic(confirmCharacteristic)*/
 
         return service
     }

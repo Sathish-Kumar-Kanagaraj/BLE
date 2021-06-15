@@ -64,6 +64,7 @@ class PodScanActivity : AppCompatActivity() {
         viewModel = ViewModelProvider(this).get(DeviceScanViewModel::class.java)
 
         activityPodScanBinding.buttonScan1.setOnClickListener({
+            App.storeIntPreference(Constants.BAR_CODE_NUMBER, 0)
             val intent = Intent(this, BarCodeScanActivity::class.java)
             startActivityForResult(intent, REQUEST_CODE)
         })
@@ -88,12 +89,21 @@ class PodScanActivity : AppCompatActivity() {
 
     private fun showResults(scanResults: Map<String, BluetoothDevice>) {
         if (!scanResults.values.toList().isEmpty()) {
-          //  activityPodScanBinding.progressbar.visibility = View.GONE
+            //  activityPodScanBinding.progressbar.visibility = View.GONE
             activityPodScanBinding.progressbar.visibility = View.VISIBLE
             bluetoothDevice = scanResults.values.toList().get(0)
-            Toast.makeText(this,"Connected with"+scanResults.values.toList().get(0).name,Toast.LENGTH_LONG).show()
+            Toast.makeText(
+                this,
+                "Connected with" + scanResults.values.toList().get(0).name,
+                Toast.LENGTH_LONG
+            ).show()
             BluetoothServer.setCurrentChatConnection(bluetoothDevice)
-            var userChoices="00011100"
+            var userChoices = "0" + "0" + "0" + App.getIntPreference(Constants.HIP, 0).toString() +
+                    App.getIntPreference(Constants.UNI, 0).toString() + App.getIntPreference(
+                Constants.Left, 0) +
+                    App.getIntPreference(Constants.Tible, 0).toString() + App.getIntPreference(
+                Constants.BAR_CODE_NUMBER,
+                0).toString()
             BluetoothServer.sendMessage(userChoices)
         }
     }

@@ -9,6 +9,7 @@ class Constants {
         const val UNI = "Uni"
         const val Left = "Left"
         const val Tible = "Tible"
+        const val BAR_CODE_NUMBER="BarCode_Number"
         const val BARCODE1="Barcode1"
         const val BARCODE2="Barcode2"
 

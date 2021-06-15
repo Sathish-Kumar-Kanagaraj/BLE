@@ -1,5 +1,6 @@
 package com.imufortka
 
+import android.content.Intent
 import android.os.Bundle
 import android.widget.Button
 import android.widget.RadioButton
@@ -70,6 +71,13 @@ class SelectionActivity : AppCompatActivity() {
         } else {
             App.storeIntPreference(Constants.Tible, 0)
         }
+
+        nextActivity()
+    }
+
+    private fun nextActivity() {
+        val intent = Intent(this, PodScanActivity::class.java)
+        startActivity(intent)
     }
 
 }
