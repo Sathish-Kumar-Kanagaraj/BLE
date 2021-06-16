@@ -73,6 +73,8 @@ class PodScanActivity : AppCompatActivity() {
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         if (resultCode == Activity.RESULT_OK && requestCode == REQUEST_CODE) {
+          /*  activityPodScanBinding.buttonScan1.setText("Pod1 Connected")
+            activityPodScanBinding.buttonScan1.isEnabled=false*/
             activityPodScanBinding.progressbar.visibility = View.VISIBLE
             Toast.makeText(this, App.getStringPrefernce(Constants.BARCODE1, ""), Toast.LENGTH_LONG)
                 .show()
@@ -94,16 +96,16 @@ class PodScanActivity : AppCompatActivity() {
             bluetoothDevice = scanResults.values.toList().get(0)
             Toast.makeText(
                 this,
-                "Connected with" + scanResults.values.toList().get(0).name,
+                "Connected with " + scanResults.values.toList().get(0).name,
                 Toast.LENGTH_LONG
             ).show()
             BluetoothServer.setCurrentChatConnection(bluetoothDevice)
-            var userChoices = "0" + "0" + "0" + App.getIntPreference(Constants.HIP, 0).toString() +
-                    App.getIntPreference(Constants.UNI, 0).toString() + App.getIntPreference(
-                Constants.Left, 0) +
-                    App.getIntPreference(Constants.Tible, 0).toString() + App.getIntPreference(
+            var userChoices = App.getIntPreference(
                 Constants.BAR_CODE_NUMBER,
-                0).toString()
+                0).toString() + "0" + "0" + App.getIntPreference(Constants.HIP, 0).toString() +
+                    App.getIntPreference(Constants.UNI, 0).toString() + App.getIntPreference(
+                Constants.RIGHT, 0) +
+                    App.getIntPreference(Constants.FEMUR, 0).toString()
             BluetoothServer.sendMessage(userChoices)
         }
     }

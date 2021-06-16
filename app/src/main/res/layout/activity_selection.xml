@@ -67,7 +67,7 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
-        android:text="2) Uni/Bilateral"
+        android:text="2) Unilateral/Bilateral"
         android:textColor="@color/black"
         android:textSize="18sp"
         app:layout_constraintEnd_toEndOf="parent"
@@ -91,7 +91,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:checked="true"
-            android:text="Uni">
+            android:text="Unilateral">
 
         </androidx.appcompat.widget.AppCompatRadioButton>
 
@@ -110,7 +110,7 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
-        android:text="3) Left/Right"
+        android:text="3) Right/Left"
         android:textColor="@color/black"
         android:textSize="18sp"
         app:layout_constraintEnd_toEndOf="parent"
@@ -129,23 +129,26 @@
         app:layout_constraintStart_toStartOf="@id/text_left"
         app:layout_constraintTop_toBottomOf="@+id/text_left">
 
-        <androidx.appcompat.widget.AppCompatRadioButton
-            android:id="@+id/radio_button_left"
-            android:layout_width="wrap_content"
-            android:checked="true"
-            android:layout_height="wrap_content"
-            android:text="Left">
-
-        </androidx.appcompat.widget.AppCompatRadioButton>
 
         <androidx.appcompat.widget.AppCompatRadioButton
             android:id="@+id/radio_button_right"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginHorizontal="24dp"
+            android:checked="true"
             android:text="Right">
 
+
         </androidx.appcompat.widget.AppCompatRadioButton>
+
+        <androidx.appcompat.widget.AppCompatRadioButton
+            android:id="@+id/radio_button_left"
+            android:layout_width="wrap_content"
+            android:layout_marginHorizontal="24dp"
+            android:layout_height="wrap_content"
+            android:text="Left">
+
+        </androidx.appcompat.widget.AppCompatRadioButton>
+
     </RadioGroup>
 
     <TextView
@@ -153,7 +156,7 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
-        android:text="4) Tible/Femur"
+        android:text="4) Femur First/Tibia First"
         android:textColor="@color/black"
         android:textSize="18sp"
         app:layout_constraintEnd_toEndOf="parent"
@@ -173,22 +176,24 @@
         app:layout_constraintTop_toBottomOf="@+id/text_tibla">
 
         <androidx.appcompat.widget.AppCompatRadioButton
-            android:id="@+id/radio_button_tible"
+            android:id="@+id/radio_button_femur"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:checked="true"
-            android:text="Tible">
+            android:text="Femur First">
 
         </androidx.appcompat.widget.AppCompatRadioButton>
 
         <androidx.appcompat.widget.AppCompatRadioButton
-            android:id="@+id/radio_button_femur"
+            android:id="@+id/radio_button_tible"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="24dp"
-            android:text="Femur">
+            android:text="Tibia First">
 
         </androidx.appcompat.widget.AppCompatRadioButton>
+
+
     </RadioGroup>
 
     <Button

@@ -49,27 +49,27 @@ class SelectionActivity : AppCompatActivity() {
 
     private fun storeValues() {
         if (radioButton1?.text.equals(Constants.HIP)) {
-            App.storeIntPreference(Constants.HIP, 1)
-        } else {
             App.storeIntPreference(Constants.HIP, 0)
+        } else {
+            App.storeIntPreference(Constants.HIP, 1)
         }
 
         if (radioButton2?.text.equals(Constants.UNI)) {
-            App.storeIntPreference(Constants.UNI, 1)
-        } else {
             App.storeIntPreference(Constants.UNI, 0)
+        } else {
+            App.storeIntPreference(Constants.UNI, 1)
         }
 
-        if (radioButton3?.text.equals(Constants.Left)) {
-            App.storeIntPreference(Constants.Left, 1)
+        if (radioButton3?.text.equals(Constants.RIGHT)) {
+            App.storeIntPreference(Constants.RIGHT, 0)
         } else {
-            App.storeIntPreference(Constants.Left, 0)
+            App.storeIntPreference(Constants.RIGHT, 1)
         }
 
-        if (radioButton4?.text.equals(Constants.Tible)) {
-            App.storeIntPreference(Constants.Tible, 1)
+        if (radioButton4?.text.equals(Constants.FEMUR)) {
+            App.storeIntPreference(Constants.FEMUR, 0)
         } else {
-            App.storeIntPreference(Constants.Tible, 0)
+            App.storeIntPreference(Constants.FEMUR, 1)
         }
 
         nextActivity()
