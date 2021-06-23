@@ -291,5 +291,26 @@ object BluetoothServer {
         return false
     }
 
+   /* fun sendCharMessage(message: Char): Boolean {
+        messageCharacteristic?.let { characterstic ->
+            characterstic.writeType = BluetoothGattCharacteristic.WRITE_TYPE_DEFAULT
+            val vOut = byteArrayOf(message as Byte)
 
+         //   val messageBytes = message.toByteArray(Charsets.UTF_8)
+            characterstic.value = vOut
+            gatt?.let {
+                val success = it.writeCharacteristic(messageCharacteristic)
+                Log.d(TAG, "onServicesDiscovered: message send: $success")
+
+                if (success) {
+                    _messages.value = Message.LocalMessage(message)
+                }
+            } ?: run {
+                Log.d(TAG, "sendMessage: no gatt connection to send a message with")
+            }
+        }
+        return false
+    }
+
+*/
 }

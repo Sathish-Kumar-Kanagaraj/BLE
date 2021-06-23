@@ -32,7 +32,7 @@ class MainActivity : AppCompatActivity(), ActivityCompat.OnRequestPermissionsRes
         showCamera()
         binding.buttonNext.setOnClickListener({
 
-        /*    val intent = Intent(this, DeviceScanActivity::class.java)
+        /*  val intent = Intent(this, DeviceScanActivity::class.java)
             startActivity(intent)*/
                val intent = Intent(this, SelectionActivity::class.java)
                startActivity(intent)

@@ -68,13 +68,26 @@ class PodScanActivity : AppCompatActivity() {
             val intent = Intent(this, BarCodeScanActivity::class.java)
             startActivityForResult(intent, REQUEST_CODE)
         })
+
+        activityPodScanBinding.buttonSend.setOnClickListener(View.OnClickListener {
+            var userChoices = App.getIntPreference(Constants.BAR_CODE_NUMBER, 0).toString() + "0" + "0" + "0" +
+                    App.getIntPreference(Constants.HIP, 0).toString() +
+                    App.getIntPreference(Constants.UNI, 0).toString() +
+                    App.getIntPreference(Constants.RIGHT, 0).toString() +
+                    App.getIntPreference(Constants.FEMUR, 0).toString()
+
+           // val someValue: Byte = 1 + 1
+
+            var value = "a"
+            BluetoothServer.sendMessage(userChoices)
+        })
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         if (resultCode == Activity.RESULT_OK && requestCode == REQUEST_CODE) {
-          /*  activityPodScanBinding.buttonScan1.setText("Pod1 Connected")
-            activityPodScanBinding.buttonScan1.isEnabled=false*/
+            /*  activityPodScanBinding.buttonScan1.setText("Pod1 Connected")
+              activityPodScanBinding.buttonScan1.isEnabled=false*/
             activityPodScanBinding.progressbar.visibility = View.VISIBLE
             Toast.makeText(this, App.getStringPrefernce(Constants.BARCODE1, ""), Toast.LENGTH_LONG)
                 .show()
@@ -100,13 +113,7 @@ class PodScanActivity : AppCompatActivity() {
                 Toast.LENGTH_LONG
             ).show()
             BluetoothServer.setCurrentChatConnection(bluetoothDevice)
-            var userChoices = App.getIntPreference(
-                Constants.BAR_CODE_NUMBER,
-                0).toString() + "0" + "0" + App.getIntPreference(Constants.HIP, 0).toString() +
-                    App.getIntPreference(Constants.UNI, 0).toString() + App.getIntPreference(
-                Constants.RIGHT, 0) +
-                    App.getIntPreference(Constants.FEMUR, 0).toString()
-            BluetoothServer.sendMessage(userChoices)
+
         }
     }
 
