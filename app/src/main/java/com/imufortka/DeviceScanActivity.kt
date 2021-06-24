@@ -54,8 +54,8 @@ class DeviceScanActivity : AppCompatActivity() {
 
         viewModel = ViewModelProvider(this).get(DeviceScanViewModel::class.java)
         viewModel.viewState.observe(this, viewStateObserver)
-        viewModel.startScan()
-        BluetoothServer.startServer(application)
+        viewModel.startScan(true)
+        BluetoothServer.startServer(application,true)
 
      //   val address = "Your device address is" + BluetoothServer.getYourDeviceAddress()
 

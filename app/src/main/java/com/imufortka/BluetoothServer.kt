@@ -21,6 +21,7 @@ object BluetoothServer {
     val requestEnableBluetooth = _requestEnableBluetooth as LiveData<Boolean>
 
     private lateinit var bluetoothManager: BluetoothManager
+    private var isScanner1: Boolean = false
 
     private val adapter: BluetoothAdapter = BluetoothAdapter.getDefaultAdapter()
 
@@ -61,16 +62,10 @@ object BluetoothServer {
 
     private var messageCharacteristic: BluetoothGattCharacteristic? = null
 
-    fun startServer(app: Application) {
+    fun startServer(app: Application, isScanner: Boolean) {
         Log.d(TAG, "startServer method called")
-
+        isScanner1 = isScanner
         bluetoothManager = app.getSystemService(Context.BLUETOOTH_SERVICE) as BluetoothManager
-        if (!adapter.isEnabled) {
-            _requestEnableBluetooth.value = true
-        } else {
-            _requestEnableBluetooth.value = false
-        }
-
         setUpGattServer(app)
         startAdvertisement()
     }
@@ -117,21 +112,30 @@ object BluetoothServer {
          * AdvertiseCallback.ADVERTISE_FAILED_DATA_TOO_LARGE. Catch this error in the
          * onStartFailure() method of an AdvertiseCallback implementation.
          */
-        val dataBuilder = AdvertiseData.Builder()
-            .addServiceUuid(ParcelUuid(Constants.SERVICE_UUID))
-            .setIncludeDeviceName(true)
+
+        if (isScanner1) {
+            val dataBuilder = AdvertiseData.Builder()
+                .addServiceUuid(ParcelUuid(Constants.SERVICE_UUID1))
+                .setIncludeDeviceName(true)
+            return dataBuilder.build()
+
+        } else {
+            val dataBuilder = AdvertiseData.Builder()
+                .addServiceUuid(ParcelUuid(Constants.SERVICE_UUID2))
+                .setIncludeDeviceName(true)
+            return dataBuilder.build()
+        }
 
         /* For example - this will cause advertising to fail (exceeds size limit) */
         //String failureData = "asdghkajsghalkxcjhfa;sghtalksjcfhalskfjhasldkjfhdskf";
         //dataBuilder.addServiceData(Constants.Service_UUID, failureData.getBytes());
-        return dataBuilder.build()
     }
 
 
     private fun startAdvertisement() {
         advertiser = adapter.bluetoothLeAdvertiser
-       var advertiseSettings=buildAdvertiseSettings()
-       var advertiseData= buildAdvertiseData()
+        var advertiseSettings = buildAdvertiseSettings()
+        var advertiseData = buildAdvertiseData()
         Log.d(TAG, "startAdvertisement: with advertiser $advertiser")
 
         if (advertiseCallback == null) {
@@ -179,23 +183,51 @@ object BluetoothServer {
 
     private fun setUpGattService(): BluetoothGattService {
         Log.d(TAG, "setUpGattService method called ")
-        val service =
-            BluetoothGattService(Constants.SERVICE_UUID, BluetoothGattService.SERVICE_TYPE_PRIMARY)
-        val messageCharacteristic = BluetoothGattCharacteristic(
-            Constants.MESSAGE_UUID,
-            BluetoothGattCharacteristic.PROPERTY_WRITE,
-            BluetoothGattCharacteristic.PERMISSION_WRITE
-        )
-        service.addCharacteristic(messageCharacteristic)
 
-      /*  val confirmCharacteristic = BluetoothGattCharacteristic(
-            Constants.CONFIRM_UUID,
-            BluetoothGattCharacteristic.PROPERTY_WRITE,
-            BluetoothGattCharacteristic.PERMISSION_WRITE
-        )
-        service.addCharacteristic(confirmCharacteristic)*/
+        if (isScanner1) {
+            val service =
+                BluetoothGattService(
+                    Constants.SERVICE_UUID1,
+                    BluetoothGattService.SERVICE_TYPE_PRIMARY
+                )
+            val messageCharacteristic = BluetoothGattCharacteristic(
+                Constants.MESSAGE_UUID,
+                BluetoothGattCharacteristic.PROPERTY_WRITE,
+                BluetoothGattCharacteristic.PERMISSION_WRITE
+            )
+            service.addCharacteristic(messageCharacteristic)
 
-        return service
+            /*  val confirmCharacteristic = BluetoothGattCharacteristic(
+                  Constants.CONFIRM_UUID,
+                  BluetoothGattCharacteristic.PROPERTY_WRITE,
+                  BluetoothGattCharacteristic.PERMISSION_WRITE
+              )
+              service.addCharacteristic(confirmCharacteristic)*/
+
+            return service
+        } else {
+            val service =
+                BluetoothGattService(
+                    Constants.SERVICE_UUID2,
+                    BluetoothGattService.SERVICE_TYPE_PRIMARY
+                )
+            val messageCharacteristic = BluetoothGattCharacteristic(
+                Constants.MESSAGE_UUID,
+                BluetoothGattCharacteristic.PROPERTY_WRITE,
+                BluetoothGattCharacteristic.PERMISSION_WRITE
+            )
+            service.addCharacteristic(messageCharacteristic)
+
+            /*  val confirmCharacteristic = BluetoothGattCharacteristic(
+                  Constants.CONFIRM_UUID,
+                  BluetoothGattCharacteristic.PROPERTY_WRITE,
+                  BluetoothGattCharacteristic.PERMISSION_WRITE
+              )
+              service.addCharacteristic(confirmCharacteristic)*/
+
+            return service
+        }
+
     }
 
     private class GattClientCallback : BluetoothGattCallback() {
@@ -216,8 +248,13 @@ object BluetoothServer {
             if (status == BluetoothGatt.GATT_SUCCESS) {
                 Log.d(TAG, "onServicesDiscovered: Have gatt $discoveredGatt")
                 gatt = discoveredGatt
-                val service = discoveredGatt?.getService(Constants.SERVICE_UUID)
-                messageCharacteristic = service?.getCharacteristic(Constants.MESSAGE_UUID)
+                if (isScanner1) {
+                    val service = discoveredGatt?.getService(Constants.SERVICE_UUID1)
+                    messageCharacteristic = service?.getCharacteristic(Constants.MESSAGE_UUID)
+                } else {
+                    val service = discoveredGatt?.getService(Constants.SERVICE_UUID2)
+                    messageCharacteristic = service?.getCharacteristic(Constants.MESSAGE_UUID)
+                }
             }
         }
     }
@@ -291,26 +328,26 @@ object BluetoothServer {
         return false
     }
 
-   /* fun sendCharMessage(message: Char): Boolean {
-        messageCharacteristic?.let { characterstic ->
-            characterstic.writeType = BluetoothGattCharacteristic.WRITE_TYPE_DEFAULT
-            val vOut = byteArrayOf(message as Byte)
+    /* fun sendCharMessage(message: Char): Boolean {
+         messageCharacteristic?.let { characterstic ->
+             characterstic.writeType = BluetoothGattCharacteristic.WRITE_TYPE_DEFAULT
+             val vOut = byteArrayOf(message as Byte)
 
-         //   val messageBytes = message.toByteArray(Charsets.UTF_8)
-            characterstic.value = vOut
-            gatt?.let {
-                val success = it.writeCharacteristic(messageCharacteristic)
-                Log.d(TAG, "onServicesDiscovered: message send: $success")
+          //   val messageBytes = message.toByteArray(Charsets.UTF_8)
+             characterstic.value = vOut
+             gatt?.let {
+                 val success = it.writeCharacteristic(messageCharacteristic)
+                 Log.d(TAG, "onServicesDiscovered: message send: $success")
 
-                if (success) {
-                    _messages.value = Message.LocalMessage(message)
-                }
-            } ?: run {
-                Log.d(TAG, "sendMessage: no gatt connection to send a message with")
-            }
-        }
-        return false
-    }
+                 if (success) {
+                     _messages.value = Message.LocalMessage(message)
+                 }
+             } ?: run {
+                 Log.d(TAG, "sendMessage: no gatt connection to send a message with")
+             }
+         }
+         return false
+     }
 
-*/
+ */
 }

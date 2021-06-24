@@ -40,8 +40,8 @@ class DeviceScanViewModel(app: Application) : AndroidViewModel(app) {
     }*/
 
 
-    fun startScan() {
-        scanFilters = buildScanFilters()
+    fun startScan(scanner1:Boolean) {
+        scanFilters = buildScanFilters(scanner1)
         scanSettings = buildScanSettings()
 
         if (scannCallback == null) {
@@ -59,11 +59,16 @@ class DeviceScanViewModel(app: Application) : AndroidViewModel(app) {
     }
 
 
-    private fun buildScanFilters(): List<ScanFilter> {
+    private fun buildScanFilters(scanner1: Boolean): List<ScanFilter> {
 
         val builder = ScanFilter.Builder()
 
-        builder.setServiceUuid(ParcelUuid(Constants.SERVICE_UUID))
+        if(scanner1){
+            Log.i(TAG,"barcode"+App.getStringPrefernce(Constants.BARCODE1,""))
+            builder.setServiceUuid(ParcelUuid(Constants.SERVICE_UUID1))
+        }else{
+            builder.setServiceUuid(ParcelUuid(Constants.SERVICE_UUID2))
+        }
         val filter = builder.build()
         return listOf(filter)
     }

@@ -51,7 +51,8 @@ class PodScanActivity : AppCompatActivity() {
     }
 
     companion object {
-        const val REQUEST_CODE = 1
+        const val REQUEST_CODE_SCANNER1 = 1
+        const val REQUEST_CODE_SCANNER2 = 2
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -66,10 +67,18 @@ class PodScanActivity : AppCompatActivity() {
         activityPodScanBinding.buttonScan1.setOnClickListener({
             App.storeIntPreference(Constants.BAR_CODE_NUMBER, 0)
             val intent = Intent(this, BarCodeScanActivity::class.java)
-            startActivityForResult(intent, REQUEST_CODE)
+            intent.putExtra(Constants.BAR_CODE_NUMBER,true)
+            startActivityForResult(intent, REQUEST_CODE_SCANNER1)
         })
 
-        activityPodScanBinding.buttonSend.setOnClickListener(View.OnClickListener {
+        activityPodScanBinding.buttonScan2.setOnClickListener({
+            App.storeIntPreference(Constants.BAR_CODE_NUMBER,1)
+            val intent=Intent(this,BarCodeScanActivity::class.java)
+            intent.putExtra(Constants.BAR_CODE_NUMBER,false)
+            startActivityForResult(intent, REQUEST_CODE_SCANNER2)
+        })
+
+        activityPodScanBinding.buttonSend.setOnClickListener({
             var userChoices = App.getIntPreference(Constants.BAR_CODE_NUMBER, 0).toString() + "0" + "0" + "0" +
                     App.getIntPreference(Constants.HIP, 0).toString() +
                     App.getIntPreference(Constants.UNI, 0).toString() +
@@ -85,15 +94,22 @@ class PodScanActivity : AppCompatActivity() {
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        if (resultCode == Activity.RESULT_OK && requestCode == REQUEST_CODE) {
+        if (resultCode == Activity.RESULT_OK && requestCode == REQUEST_CODE_SCANNER1) {
             /*  activityPodScanBinding.buttonScan1.setText("Pod1 Connected")
               activityPodScanBinding.buttonScan1.isEnabled=false*/
             activityPodScanBinding.progressbar.visibility = View.VISIBLE
             Toast.makeText(this, App.getStringPrefernce(Constants.BARCODE1, ""), Toast.LENGTH_LONG)
                 .show()
             viewModel.viewState.observe(this, viewStateObserver)
-            viewModel.startScan()
-            BluetoothServer.startServer(application)
+            viewModel.startScan(true)
+            BluetoothServer.startServer(application,true)
+        }else if(resultCode==Activity.RESULT_OK && requestCode== REQUEST_CODE_SCANNER2){
+            activityPodScanBinding.progressbar.visibility = View.VISIBLE
+            Toast.makeText(this, App.getStringPrefernce(Constants.BARCODE2, ""), Toast.LENGTH_LONG)
+                .show()
+            viewModel.viewState.observe(this, viewStateObserver)
+            viewModel.startScan(false)
+            BluetoothServer.startServer(application,false)
         }
     }
 
