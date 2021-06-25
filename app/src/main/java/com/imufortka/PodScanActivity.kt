@@ -87,8 +87,10 @@ class PodScanActivity : AppCompatActivity() {
 
            // val someValue: Byte = 1 + 1
 
-            var value = "a"
-            BluetoothServer.sendMessage(userChoices)
+            var value = "abcd"
+            for (letter in value) {
+                BluetoothServer.sendMessage(letter.toString())
+            }
         })
     }
 
