@@ -22,7 +22,7 @@ class DeviceScanActivity : AppCompatActivity() {
     }
 
     private val messageObserver= Observer<Message> {message->
-          Toast.makeText(this,message.text,Toast.LENGTH_LONG).show()
+        //  Toast.makeText(this,message.text,Toast.LENGTH_LONG).show()
     }
 
     private val viewStateObserver = Observer<DeviceScanViewState> { state ->

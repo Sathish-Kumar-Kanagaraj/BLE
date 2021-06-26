@@ -4,6 +4,7 @@ import android.app.Activity
 import android.bluetooth.BluetoothDevice
 import android.content.Intent
 import android.os.Bundle
+import android.os.Handler
 import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
@@ -25,7 +26,7 @@ class PodScanActivity : AppCompatActivity() {
     }
 
     private val messageObserver = Observer<Message> { message ->
-        Toast.makeText(this, message.text, Toast.LENGTH_LONG).show()
+     //   Toast.makeText(this, message.text, Toast.LENGTH_LONG).show()
     }
 
     private val viewStateObserver = Observer<DeviceScanViewState> { state ->
@@ -70,16 +71,28 @@ class PodScanActivity : AppCompatActivity() {
         })
 
         activityPodScanBinding.buttonSend.setOnClickListener(View.OnClickListener {
-            var userChoices = App.getIntPreference(Constants.BAR_CODE_NUMBER, 0).toString() + "0" + "0" + "0" +
-                    App.getIntPreference(Constants.HIP, 0).toString() +
-                    App.getIntPreference(Constants.UNI, 0).toString() +
-                    App.getIntPreference(Constants.RIGHT, 0).toString() +
-                    App.getIntPreference(Constants.FEMUR, 0).toString()
+            var userChoices =
+                "a"+
+                App.getIntPreference(Constants.BAR_CODE_NUMBER, 0).toString() + "0" + "0" + "0" +
+                        App.getIntPreference(Constants.HIP, 0).toString() +
+                        App.getIntPreference(Constants.UNI, 0).toString() +
+                        App.getIntPreference(Constants.RIGHT, 0).toString() +
+                        App.getIntPreference(Constants.FEMUR, 0).toString()+"a"
 
-           // val someValue: Byte = 1 + 1
+            // val someValue: Byte = 1 + 1
 
-            var value = "a"
-            BluetoothServer.sendMessage(userChoices)
+            //     for(letter in value){
+            var value = "abcd"
+            for (letter in userChoices) {
+                BluetoothServer.sendMessage(letter.toString())
+                Thread.sleep(500)
+            }
+      /*      val handler = Handler()
+            handler.postDelayed({
+
+            }, 5000)*/
+            Toast.makeText(this, "Data Sent Successfully", Toast.LENGTH_LONG)
+                .show()
         })
     }
 
