@@ -73,6 +73,7 @@ object BluetoothServer {
     fun stopServer() {
         Log.d(TAG, "stopServer method called")
         stopAdvertising()
+        gatt?.disconnect()
     }
 
     /**
@@ -80,8 +81,11 @@ object BluetoothServer {
      */
     private fun stopAdvertising() {
         Log.d(TAG, "Stopping Advertising with advertiser $advertiser")
-        advertiser?.stopAdvertising(advertiseCallback)
-        advertiseCallback = null
+        if(advertiseCallback!=null){
+            advertiser?.stopAdvertising(advertiseCallback)
+            advertiseCallback = null
+        }
+
     }
 
     fun getYourDeviceAddress(): String = bluetoothManager.adapter.address
@@ -115,13 +119,13 @@ object BluetoothServer {
 
         if (isScanner1) {
             val dataBuilder = AdvertiseData.Builder()
-                .addServiceUuid(ParcelUuid(Constants.SERVICE_UUID))
+                .addServiceUuid(ParcelUuid(Constants.SERVICE_UUID1))
                 .setIncludeDeviceName(true)
             return dataBuilder.build()
 
         } else {
             val dataBuilder = AdvertiseData.Builder()
-                .addServiceUuid(ParcelUuid(Constants.SERVICE_UUID))
+                .addServiceUuid(ParcelUuid(Constants.SERVICE_UUID2))
                 .setIncludeDeviceName(true)
             return dataBuilder.build()
         }
@@ -187,7 +191,7 @@ object BluetoothServer {
         if (isScanner1) {
             val service =
                 BluetoothGattService(
-                    Constants.SERVICE_UUID,
+                    Constants.SERVICE_UUID1,
                     BluetoothGattService.SERVICE_TYPE_PRIMARY
                 )
             val messageCharacteristic = BluetoothGattCharacteristic(
@@ -208,7 +212,7 @@ object BluetoothServer {
         } else {
             val service =
                 BluetoothGattService(
-                    Constants.SERVICE_UUID,
+                    Constants.SERVICE_UUID2,
                     BluetoothGattService.SERVICE_TYPE_PRIMARY
                 )
             val messageCharacteristic = BluetoothGattCharacteristic(
@@ -241,6 +245,10 @@ object BluetoothServer {
             if (isSuccess && isConnected) {
                 gatt?.discoverServices()
             }
+            if(newState==BluetoothGatt.STATE_DISCONNECTED){
+                gatt?.close()
+                gatt==null
+            }
         }
 
         override fun onServicesDiscovered(discoveredGatt: BluetoothGatt?, status: Int) {
@@ -249,10 +257,10 @@ object BluetoothServer {
                 Log.d(TAG, "onServicesDiscovered: Have gatt $discoveredGatt")
                 gatt = discoveredGatt
                 if (isScanner1) {
-                    val service = discoveredGatt?.getService(Constants.SERVICE_UUID)
+                    val service = discoveredGatt?.getService(Constants.SERVICE_UUID1)
                     messageCharacteristic = service?.getCharacteristic(Constants.MESSAGE_UUID)
                 } else {
-                    val service = discoveredGatt?.getService(Constants.SERVICE_UUID)
+                    val service = discoveredGatt?.getService(Constants.SERVICE_UUID2)
                     messageCharacteristic = service?.getCharacteristic(Constants.MESSAGE_UUID)
                 }
             }

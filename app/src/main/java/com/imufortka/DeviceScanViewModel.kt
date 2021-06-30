@@ -64,10 +64,9 @@ class DeviceScanViewModel(app: Application) : AndroidViewModel(app) {
         val builder = ScanFilter.Builder()
 
         if(scanner1){
-            Log.i(TAG,"barcode"+App.getStringPrefernce(Constants.BARCODE1,""))
-            builder.setServiceUuid(ParcelUuid(Constants.SERVICE_UUID))
+            builder.setServiceUuid(ParcelUuid(Constants.SERVICE_UUID1))
         }else{
-            builder.setServiceUuid(ParcelUuid(Constants.SERVICE_UUID))
+            builder.setServiceUuid(ParcelUuid(Constants.SERVICE_UUID2))
         }
         val filter = builder.build()
         return listOf(filter)

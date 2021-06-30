@@ -4,12 +4,14 @@ import android.app.Activity
 import android.bluetooth.BluetoothDevice
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.imufortka.databinding.ActivityPodScanBinding
+private const val TAG = "POD SCAN ACTIVITY"
 
 class PodScanActivity : AppCompatActivity() {
 
@@ -41,11 +43,11 @@ class PodScanActivity : AppCompatActivity() {
             is DeviceConnectionState.Connected -> {
                 activityPodScanBinding.progressbar.visibility = View.GONE
                 val device = state.device
-                Toast.makeText(this, "Device Connected" + device, Toast.LENGTH_LONG).show()
+                Toast.makeText(this, "Device Connected " + device, Toast.LENGTH_LONG).show()
             }
             is DeviceConnectionState.Disconnected -> {
                 activityPodScanBinding.progressbar.visibility = View.GONE
-                Toast.makeText(this, "Device Disconnected", Toast.LENGTH_LONG).show()
+                Toast.makeText(this, "Device Disconnected ", Toast.LENGTH_LONG).show()
             }
         }
     }
@@ -93,9 +95,12 @@ class PodScanActivity : AppCompatActivity() {
             }
         })
     }
-
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+
         super.onActivityResult(requestCode, resultCode, data)
+        BluetoothServer.connectionRequest.observe(this, connectionRequestObserver)
+        BluetoothServer.deviceConnection.observe(this, deviceConnectionObserver)
+        BluetoothServer.messages.observe(this, messageObserver)
         if (resultCode == Activity.RESULT_OK && requestCode == REQUEST_CODE_SCANNER1) {
             /*  activityPodScanBinding.buttonScan1.setText("Pod1 Connected")
               activityPodScanBinding.buttonScan1.isEnabled=false*/
@@ -111,6 +116,7 @@ class PodScanActivity : AppCompatActivity() {
                 .show()
             viewModel.viewState.observe(this, viewStateObserver)
             viewModel.startScan(false)
+           // BluetoothServer.stopServer()
             BluetoothServer.startServer(application,false)
         }
     }
@@ -124,13 +130,15 @@ class PodScanActivity : AppCompatActivity() {
         if (!scanResults.values.toList().isEmpty()) {
             //  activityPodScanBinding.progressbar.visibility = View.GONE
             activityPodScanBinding.progressbar.visibility = View.VISIBLE
-            bluetoothDevice = scanResults.values.toList().get(0)
-            Toast.makeText(
-                this,
-                "Connected with " + scanResults.values.toList().get(0).name,
-                Toast.LENGTH_LONG
-            ).show()
-            BluetoothServer.setCurrentChatConnection(bluetoothDevice)
+
+            for(item in scanResults.values.toList()){
+                bluetoothDevice = item
+                Toast.makeText(this, "Connected with " +
+                        item.name, Toast.LENGTH_LONG).show()
+                Log.i(TAG,"Device Name:"+item.name)
+                bluetoothDevice = item
+                BluetoothServer.setCurrentChatConnection(bluetoothDevice)
+            }
 
         }
     }
@@ -143,9 +151,12 @@ class PodScanActivity : AppCompatActivity() {
 
     override fun onStart() {
         super.onStart()
-        BluetoothServer.connectionRequest.observe(this, connectionRequestObserver)
-        BluetoothServer.deviceConnection.observe(this, deviceConnectionObserver)
-        BluetoothServer.messages.observe(this, messageObserver)
+
+    }
+
+    override fun onStop() {
+        super.onStop()
+
     }
 
     override fun onDestroy() {
