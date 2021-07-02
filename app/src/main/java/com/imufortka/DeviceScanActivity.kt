@@ -66,7 +66,7 @@ class DeviceScanActivity : AppCompatActivity() {
         })
 
         binding.buttonSend.setOnClickListener(View.OnClickListener {
-             BluetoothServer.sendMessage("success")
+           //  BluetoothServer.sendMessage("success")
         })
     }
 

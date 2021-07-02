@@ -49,7 +49,11 @@ class DeviceScanViewModel(app: Application) : AndroidViewModel(app) {
             scanner = adapter.bluetoothLeScanner
             _viewState.value = DeviceScanViewState.ActiveScan
 
-            Handler().postDelayed({ stopScanning() }, SCAN_PERIOD)
+            Handler().postDelayed(
+                {
+                    stopScanning()
+                },
+                SCAN_PERIOD)
 
             scannCallback = DeviceScanCallback()
             scanner?.startScan(scanFilters, scanSettings, scannCallback)
@@ -64,8 +68,12 @@ class DeviceScanViewModel(app: Application) : AndroidViewModel(app) {
         val builder = ScanFilter.Builder()
 
         if(scanner1){
+            Log.d(TAG, "scanner1 serviceuuid"+Constants.SERVICE_UUID1)
+
             builder.setServiceUuid(ParcelUuid(Constants.SERVICE_UUID1))
         }else{
+            Log.d(TAG, "scanner2 serviceuuid"+Constants.SERVICE_UUID2)
+
             builder.setServiceUuid(ParcelUuid(Constants.SERVICE_UUID2))
         }
         val filter = builder.build()
@@ -82,6 +90,8 @@ class DeviceScanViewModel(app: Application) : AndroidViewModel(app) {
 
             if (results != null) {
                 for (item in results) {
+                    Log.d(TAG, "onBatchScanResults "+item.device.address)
+
                     item.device?.let { device ->
                         scanResults[device.address] = device
                     }
@@ -96,8 +106,12 @@ class DeviceScanViewModel(app: Application) : AndroidViewModel(app) {
             super.onScanResult(callbackType, result)
             result?.device?.let { device ->
                 scanResults[device.address] = device
+                Log.d(TAG, "onScanResult "+result.device.address)
             }
             _viewState.value = DeviceScanViewState.ScanResults(scanResults)
+            stopScanning()
+            Log.d(TAG, "_viewState "+_viewState.value)
+
         }
 
         override fun onScanFailed(errorCode: Int) {
@@ -109,6 +123,8 @@ class DeviceScanViewModel(app: Application) : AndroidViewModel(app) {
     }
 
     private fun stopScanning() {
+        Log.d(TAG, "Stop scanning")
+
         scanner?.stopScan(scannCallback)
         scannCallback = null
         _viewState.value = DeviceScanViewState.ScanResults(scanResults)

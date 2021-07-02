@@ -21,6 +21,7 @@ object BluetoothServer {
     val requestEnableBluetooth = _requestEnableBluetooth as LiveData<Boolean>
 
     private lateinit var bluetoothManager: BluetoothManager
+
     private var isScanner1: Boolean = false
 
     private val adapter: BluetoothAdapter = BluetoothAdapter.getDefaultAdapter()
@@ -60,13 +61,15 @@ object BluetoothServer {
     private val _messages = MutableLiveData<Message>()
     val messages = _messages as LiveData<Message>
 
-    private var messageCharacteristic: BluetoothGattCharacteristic? = null
+    private var messageCharacteristic1: BluetoothGattCharacteristic? = null
+    private var messageCharacteristic2: BluetoothGattCharacteristic? = null
 
     fun startServer(app: Application, isScanner: Boolean) {
         Log.d(TAG, "startServer method called")
         isScanner1 = isScanner
         bluetoothManager = app.getSystemService(Context.BLUETOOTH_SERVICE) as BluetoothManager
         setUpGattServer(app)
+
         startAdvertisement()
     }
 
@@ -81,7 +84,7 @@ object BluetoothServer {
      */
     private fun stopAdvertising() {
         Log.d(TAG, "Stopping Advertising with advertiser $advertiser")
-        if(advertiseCallback!=null){
+        if (advertiseCallback != null) {
             advertiser?.stopAdvertising(advertiseCallback)
             advertiseCallback = null
         }
@@ -245,9 +248,9 @@ object BluetoothServer {
             if (isSuccess && isConnected) {
                 gatt?.discoverServices()
             }
-            if(newState==BluetoothGatt.STATE_DISCONNECTED){
+            if (newState == BluetoothGatt.STATE_DISCONNECTED) {
                 gatt?.close()
-                gatt==null
+                gatt == null
             }
         }
 
@@ -256,13 +259,13 @@ object BluetoothServer {
             if (status == BluetoothGatt.GATT_SUCCESS) {
                 Log.d(TAG, "onServicesDiscovered: Have gatt $discoveredGatt")
                 gatt = discoveredGatt
-                if (isScanner1) {
-                    val service = discoveredGatt?.getService(Constants.SERVICE_UUID1)
-                    messageCharacteristic = service?.getCharacteristic(Constants.MESSAGE_UUID)
-                } else {
-                    val service = discoveredGatt?.getService(Constants.SERVICE_UUID2)
-                    messageCharacteristic = service?.getCharacteristic(Constants.MESSAGE_UUID)
-                }
+                //      if (isScanner1) {
+                val service1 = discoveredGatt?.getService(Constants.SERVICE_UUID1)
+                messageCharacteristic1 = service1?.getCharacteristic(Constants.MESSAGE_UUID)
+                //     } else {
+                val service2 = discoveredGatt?.getService(Constants.SERVICE_UUID2)
+                messageCharacteristic2 = service2?.getCharacteristic(Constants.MESSAGE_UUID)
+                //    }
             }
         }
     }
@@ -316,14 +319,14 @@ object BluetoothServer {
     }
 
 
-    fun sendMessage(message: String): Boolean {
-        messageCharacteristic?.let { characterstic ->
+    fun sendMessagePod1(message: String): Boolean {
+        messageCharacteristic1?.let { characterstic ->
             characterstic.writeType = BluetoothGattCharacteristic.WRITE_TYPE_DEFAULT
 
             val messageBytes = message.toByteArray(Charsets.UTF_8)
             characterstic.value = messageBytes
             gatt?.let {
-                val success = it.writeCharacteristic(messageCharacteristic)
+                val success = it.writeCharacteristic(messageCharacteristic1)
                 Log.d(TAG, "onServicesDiscovered: message send: $success")
 
                 if (success) {
@@ -336,26 +339,24 @@ object BluetoothServer {
         return false
     }
 
-    /* fun sendCharMessage(message: Char): Boolean {
-         messageCharacteristic?.let { characterstic ->
-             characterstic.writeType = BluetoothGattCharacteristic.WRITE_TYPE_DEFAULT
-             val vOut = byteArrayOf(message as Byte)
+    fun sendMessagePod2(message: String): Boolean {
+        messageCharacteristic2?.let { characterstic ->
+            characterstic.writeType = BluetoothGattCharacteristic.WRITE_TYPE_DEFAULT
 
-          //   val messageBytes = message.toByteArray(Charsets.UTF_8)
-             characterstic.value = vOut
-             gatt?.let {
-                 val success = it.writeCharacteristic(messageCharacteristic)
-                 Log.d(TAG, "onServicesDiscovered: message send: $success")
+            val messageBytes = message.toByteArray(Charsets.UTF_8)
+            characterstic.value = messageBytes
+            gatt?.let {
+                val success = it.writeCharacteristic(messageCharacteristic2)
+                Log.d(TAG, "onServicesDiscovered: message send: $success")
 
-                 if (success) {
-                     _messages.value = Message.LocalMessage(message)
-                 }
-             } ?: run {
-                 Log.d(TAG, "sendMessage: no gatt connection to send a message with")
-             }
-         }
-         return false
-     }
+                if (success) {
+                    _messages.value = Message.LocalMessage(message)
+                }
+            } ?: run {
+                Log.d(TAG, "sendMessage: no gatt connection to send a message with")
+            }
+        }
+        return false
+    }
 
- */
 }
