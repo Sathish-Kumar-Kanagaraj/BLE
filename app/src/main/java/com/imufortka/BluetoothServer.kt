@@ -122,13 +122,13 @@ object BluetoothServer {
 
         if (isScanner1) {
             val dataBuilder = AdvertiseData.Builder()
-                .addServiceUuid(ParcelUuid(Constants.SERVICE_UUID1))
+                .addServiceUuid(ParcelUuid(Constants.SERVICE_UUID))
                 .setIncludeDeviceName(true)
             return dataBuilder.build()
 
         } else {
             val dataBuilder = AdvertiseData.Builder()
-                .addServiceUuid(ParcelUuid(Constants.SERVICE_UUID2))
+                .addServiceUuid(ParcelUuid(Constants.SERVICE_UUID))
                 .setIncludeDeviceName(true)
             return dataBuilder.build()
         }
@@ -194,7 +194,7 @@ object BluetoothServer {
         if (isScanner1) {
             val service =
                 BluetoothGattService(
-                    Constants.SERVICE_UUID1,
+                    Constants.SERVICE_UUID,
                     BluetoothGattService.SERVICE_TYPE_PRIMARY
                 )
             val messageCharacteristic = BluetoothGattCharacteristic(
@@ -215,7 +215,7 @@ object BluetoothServer {
         } else {
             val service =
                 BluetoothGattService(
-                    Constants.SERVICE_UUID2,
+                    Constants.SERVICE_UUID,
                     BluetoothGattService.SERVICE_TYPE_PRIMARY
                 )
             val messageCharacteristic = BluetoothGattCharacteristic(
@@ -260,10 +260,10 @@ object BluetoothServer {
                 Log.d(TAG, "onServicesDiscovered: Have gatt $discoveredGatt")
                 gatt = discoveredGatt
                 //      if (isScanner1) {
-                val service1 = discoveredGatt?.getService(Constants.SERVICE_UUID1)
+                val service1 = discoveredGatt?.getService(Constants.SERVICE_UUID)
                 messageCharacteristic1 = service1?.getCharacteristic(Constants.MESSAGE_UUID)
                 //     } else {
-                val service2 = discoveredGatt?.getService(Constants.SERVICE_UUID2)
+                val service2 = discoveredGatt?.getService(Constants.SERVICE_UUID)
                 messageCharacteristic2 = service2?.getCharacteristic(Constants.MESSAGE_UUID)
                 //    }
             }

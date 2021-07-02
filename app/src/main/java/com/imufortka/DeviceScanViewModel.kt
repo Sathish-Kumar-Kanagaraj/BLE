@@ -68,13 +68,13 @@ class DeviceScanViewModel(app: Application) : AndroidViewModel(app) {
         val builder = ScanFilter.Builder()
 
         if(scanner1){
-            Log.d(TAG, "scanner1 serviceuuid"+Constants.SERVICE_UUID1)
+            Log.d(TAG, "scanner1 serviceuuid"+Constants.SERVICE_UUID)
 
-            builder.setServiceUuid(ParcelUuid(Constants.SERVICE_UUID1))
+            builder.setServiceUuid(ParcelUuid(Constants.SERVICE_UUID))
         }else{
-            Log.d(TAG, "scanner2 serviceuuid"+Constants.SERVICE_UUID2)
+            Log.d(TAG, "scanner2 serviceuuid"+Constants.SERVICE_UUID)
 
-            builder.setServiceUuid(ParcelUuid(Constants.SERVICE_UUID2))
+            builder.setServiceUuid(ParcelUuid(Constants.SERVICE_UUID))
         }
         val filter = builder.build()
         return listOf(filter)
