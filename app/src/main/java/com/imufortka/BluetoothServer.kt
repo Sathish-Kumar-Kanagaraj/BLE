@@ -155,6 +155,7 @@ object BluetoothServer {
     private class DeviceAdvertiseCallback : AdvertiseCallback() {
         override fun onStartFailure(errorCode: Int) {
             super.onStartFailure(errorCode)
+            Log.i(TAG,errorCode.toString())
             Log.d(TAG, "Advertising failed")
 
         }
