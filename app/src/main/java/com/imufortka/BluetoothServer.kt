@@ -155,7 +155,7 @@ object BluetoothServer {
     private class DeviceAdvertiseCallback : AdvertiseCallback() {
         override fun onStartFailure(errorCode: Int) {
             super.onStartFailure(errorCode)
-            Log.i(TAG,errorCode.toString())
+            Log.i(TAG, errorCode.toString())
             Log.d(TAG, "Advertising failed")
 
         }
@@ -199,7 +199,7 @@ object BluetoothServer {
                     BluetoothGattService.SERVICE_TYPE_PRIMARY
                 )
             val messageCharacteristic = BluetoothGattCharacteristic(
-                Constants.MESSAGE_UUID,
+                Constants.MESSAGE_UUID1,
                 BluetoothGattCharacteristic.PROPERTY_WRITE,
                 BluetoothGattCharacteristic.PERMISSION_WRITE
             )
@@ -220,7 +220,7 @@ object BluetoothServer {
                     BluetoothGattService.SERVICE_TYPE_PRIMARY
                 )
             val messageCharacteristic = BluetoothGattCharacteristic(
-                Constants.MESSAGE_UUID,
+                Constants.MESSAGE_UUID2,
                 BluetoothGattCharacteristic.PROPERTY_WRITE,
                 BluetoothGattCharacteristic.PERMISSION_WRITE
             )
@@ -262,10 +262,10 @@ object BluetoothServer {
                 gatt = discoveredGatt
                 //      if (isScanner1) {
                 val service1 = discoveredGatt?.getService(Constants.SERVICE_UUID1)
-                messageCharacteristic1 = service1?.getCharacteristic(Constants.MESSAGE_UUID)
+                messageCharacteristic1 = service1?.getCharacteristic(Constants.MESSAGE_UUID1)
                 //     } else {
                 val service2 = discoveredGatt?.getService(Constants.SERVICE_UUID2)
-                messageCharacteristic2 = service2?.getCharacteristic(Constants.MESSAGE_UUID)
+                messageCharacteristic2 = service2?.getCharacteristic(Constants.MESSAGE_UUID2)
                 //    }
             }
         }
@@ -309,11 +309,18 @@ object BluetoothServer {
                 offset,
                 value
             )
-            if (characteristic?.uuid == Constants.MESSAGE_UUID) {
+            if (characteristic?.uuid == Constants.MESSAGE_UUID1) {
                 gattServer?.sendResponse(device, requestId, BluetoothGatt.GATT_SUCCESS, 0, null)
                 val message = value?.toString(Charsets.UTF_8)
                 Log.d(TAG, "onCharacteristicWriteRequest: Have message: \"$message\"")
                 message?.let { _messages.postValue(Message.RemoteMessage(it)) }
+            } else if (characteristic?.uuid == Constants.MESSAGE_UUID2) {
+                gattServer?.sendResponse(device, requestId, BluetoothGatt.GATT_SUCCESS, 0, null)
+                val message = value?.toString(Charsets.UTF_8)
+                Log.d(TAG, "onCharacteristicWriteRequest: Have message: \"$message\"")
+                message?.let {
+                    _messages.postValue(Message.RemoteMessage(it))
+                }
             }
         }
 
