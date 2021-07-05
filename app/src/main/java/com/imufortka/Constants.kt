@@ -20,7 +20,7 @@ class Constants {
      /*   val SERVICE_UUID1:UUID=UUID.fromString(App.getStringPrefernce(BARCODE1,"00001523-1212-efde-1523-785feabcd123"))
         val SERVICE_UUID2:UUID=UUID.fromString(App.getStringPrefernce(BARCODE2,"0000b81d-0000-1000-8000-00805f9b34fb"))*/
 
-        val MESSAGE_UUID: UUID = UUID.fromString("00001525-1212-efde-1523-785feabcd123")
+        val MESSAGE_UUID: UUID = UUID.fromString("00001528-1212-efde-1523-785feabcd123")
 
         /**
          * UUID to confirm device connection
