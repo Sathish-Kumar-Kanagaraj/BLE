@@ -112,19 +112,19 @@ class PodScanActivity : AppCompatActivity() {
             /*  activityPodScanBinding.buttonScan1.setText("Pod1 Connected")
               activityPodScanBinding.buttonScan1.isEnabled=false*/
             activityPodScanBinding.progressbar.visibility = View.VISIBLE
+            BluetoothServer.startServer(application,true)
             Toast.makeText(this, App.getStringPrefernce(Constants.BARCODE1, ""), Toast.LENGTH_LONG)
                 .show()
             viewModel.viewState.observe(this, viewStateObserver)
             viewModel.startScan(true)
-            BluetoothServer.startServer(application,true)
         }else if(resultCode==Activity.RESULT_OK && requestCode== REQUEST_CODE_SCANNER2){
             activityPodScanBinding.progressbar.visibility = View.VISIBLE
+            BluetoothServer.startServer(application,false)
             Toast.makeText(this, App.getStringPrefernce(Constants.BARCODE2, ""), Toast.LENGTH_LONG)
                 .show()
             viewModel.viewState.observe(this, viewStateObserver)
             viewModel.startScan(false)
            // BluetoothServer.stopServer()
-            BluetoothServer.startServer(application,false)
         }
     }
 
