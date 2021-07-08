@@ -40,17 +40,22 @@ object BluetoothServer {
 
     val deviceConnection = _deviceConnection as LiveData<DeviceConnectionState>
 
-    private var gattClientCallback: BluetoothGattCallback? = null
+    private var gattClientCallback1: BluetoothGattCallback? = null
+    private var gattClientCallback2: BluetoothGattCallback? = null
 
-    private var gattClient: BluetoothGatt? = null
+    private var gattClient1: BluetoothGatt? = null
+    private var gattClient2: BluetoothGatt? = null
 
     private var app: Application? = null
 
-    private var gatt: BluetoothGatt? = null
+    private var gatt1: BluetoothGatt? = null
+    private var gatt2: BluetoothGatt? = null
 
-    private var gattServerCallback: BluetoothGattServerCallback? = null
+    private var gattServerCallback1: BluetoothGattServerCallback? = null
+    private var gattServerCallback2: BluetoothGattServerCallback? = null
 
-    private var gattServer: BluetoothGattServer? = null
+    private var gattServer1: BluetoothGattServer? = null
+    private var gattServer2: BluetoothGattServer? = null
 
     private val _connectionRequest = MutableLiveData<BluetoothDevice>()
 
@@ -68,15 +73,20 @@ object BluetoothServer {
         Log.d(TAG, "startServer method called")
         isScanner1 = isScanner
         bluetoothManager = app.getSystemService(Context.BLUETOOTH_SERVICE) as BluetoothManager
-        setUpGattServer(app)
 
+        if(isScanner1){
+            setUpGattServer1(app)
+        }else{
+            setUpGattServer2(app)
+        }
         startAdvertisement()
     }
 
     fun stopServer() {
         Log.d(TAG, "stopServer method called")
         stopAdvertising()
-        gatt?.disconnect()
+        gatt1?.disconnect()
+        gatt2?.disconnect()
     }
 
     /**
@@ -172,28 +182,47 @@ object BluetoothServer {
         Log.d(TAG, "setCurrentChatConnection method called $device")
         currentDevice = device
         _deviceConnection.value = DeviceConnectionState.Connected(device)
-        connectToChatDevice(device)
+
+        if(isScanner1){
+            connectToChatDevice1(device)
+        }else{
+            connectToChatDevice2(device)
+        }
+
     }
 
-    private fun connectToChatDevice(device: BluetoothDevice) {
+    private fun connectToChatDevice1(device: BluetoothDevice) {
         Log.d(TAG, "connectToChatDevice method called $device")
-        gattClientCallback = GattClientCallback()
-        gattClient = device.connectGatt(app, false, gattClientCallback)
+            gattClientCallback1 = GattClientCallback1()
+            gattClient1 = device.connectGatt(app, false, gattClientCallback1)
+
+    }
+
+    private fun connectToChatDevice2(device: BluetoothDevice) {
+        Log.d(TAG, "connectToChatDevice method called $device")
+        gattClientCallback2 = GattClientCallback2()
+        gattClient2 = device.connectGatt(app, false, gattClientCallback2)
+
     }
 
 
-    private fun setUpGattServer(app: Application) {
+    private fun setUpGattServer1(app: Application) {
         Log.d(TAG, "setUpGattServer method called ")
-        gattServerCallback = GattServerCallback()
-        gattServer = bluetoothManager.openGattServer(app, gattServerCallback)
-            .apply { addService(setUpGattService()) }
+        gattServerCallback1 = GattServerCallback1()
+        gattServer1 = bluetoothManager.openGattServer(app, gattServerCallback1)
+            .apply { addService(setUpGattService1()) }
     }
 
-    private fun setUpGattService(): BluetoothGattService {
-        Log.d(TAG, "setUpGattService method called ")
+    private fun setUpGattServer2(app: Application) {
+        Log.d(TAG, "setUpGattServer method called ")
+        gattServerCallback2 = GattServerCallback2()
+        gattServer2 = bluetoothManager.openGattServer(app, gattServerCallback2)
+            .apply { addService(setUpGattService2()) }
+    }
 
-        if (isScanner1) {
-            val service =
+    private fun setUpGattService1(): BluetoothGattService {
+        Log.d(TAG, "setUpGattService method called ")
+         val service =
                 BluetoothGattService(
                     Constants.SERVICE_UUID1,
                     BluetoothGattService.SERVICE_TYPE_PRIMARY
@@ -213,7 +242,12 @@ object BluetoothServer {
               service.addCharacteristic(confirmCharacteristic)*/
 
             return service
-        } else {
+
+    }
+
+    private fun setUpGattService2(): BluetoothGattService {
+        Log.d(TAG, "setUpGattService method called ")
+
             val service =
                 BluetoothGattService(
                     Constants.SERVICE_UUID2,
@@ -234,11 +268,12 @@ object BluetoothServer {
               service.addCharacteristic(confirmCharacteristic)*/
 
             return service
-        }
 
     }
 
-    private class GattClientCallback : BluetoothGattCallback() {
+
+
+    private class GattClientCallback1 : BluetoothGattCallback() {
         override fun onConnectionStateChange(gatt: BluetoothGatt?, status: Int, newState: Int) {
             super.onConnectionStateChange(gatt, status, newState)
 
@@ -259,20 +294,44 @@ object BluetoothServer {
             super.onServicesDiscovered(discoveredGatt, status)
             if (status == BluetoothGatt.GATT_SUCCESS) {
                 Log.d(TAG, "onServicesDiscovered: Have gatt $discoveredGatt")
-                gatt = discoveredGatt
-                //      if (isScanner1) {
+                gatt1 = discoveredGatt
                 val service1 = discoveredGatt?.getService(Constants.SERVICE_UUID1)
                 messageCharacteristic1 = service1?.getCharacteristic(Constants.MESSAGE_UUID1)
-                //     } else {
-                val service2 = discoveredGatt?.getService(Constants.SERVICE_UUID2)
-                messageCharacteristic2 = service2?.getCharacteristic(Constants.MESSAGE_UUID2)
-                //    }
+
+            }
+        }
+    }
+
+    private class GattClientCallback2 : BluetoothGattCallback() {
+        override fun onConnectionStateChange(gatt: BluetoothGatt?, status: Int, newState: Int) {
+            super.onConnectionStateChange(gatt, status, newState)
+
+            val isSuccess = status == BluetoothGatt.GATT_SUCCESS
+            val isConnected = newState == BluetoothProfile.STATE_CONNECTED
+            Log.d(TAG, "onGattConnect: Have gatt $isSuccess and $isConnected")
+
+            if (isSuccess && isConnected) {
+                gatt?.discoverServices()
+            }
+            if (newState == BluetoothGatt.STATE_DISCONNECTED) {
+                gatt?.close()
+                gatt == null
+            }
+        }
+
+        override fun onServicesDiscovered(discoveredGatt: BluetoothGatt?, status: Int) {
+            super.onServicesDiscovered(discoveredGatt, status)
+            if (status == BluetoothGatt.GATT_SUCCESS) {
+                Log.d(TAG, "onServicesDiscovered: Have gatt $discoveredGatt")
+                gatt2 = discoveredGatt
+                val service = discoveredGatt?.getService(Constants.SERVICE_UUID2)
+                messageCharacteristic2 = service?.getCharacteristic(Constants.MESSAGE_UUID2)
             }
         }
     }
 
 
-    private class GattServerCallback : BluetoothGattServerCallback() {
+    private class GattServerCallback1 : BluetoothGattServerCallback() {
         override fun onConnectionStateChange(device: BluetoothDevice?, status: Int, newState: Int) {
             super.onConnectionStateChange(device, status, newState)
             val isSuccess = status == BluetoothGatt.GATT_SUCCESS
@@ -310,12 +369,66 @@ object BluetoothServer {
                 value
             )
             if (characteristic?.uuid == Constants.MESSAGE_UUID1) {
-                gattServer?.sendResponse(device, requestId, BluetoothGatt.GATT_SUCCESS, 0, null)
+                gattServer1?.sendResponse(device, requestId, BluetoothGatt.GATT_SUCCESS, 0, null)
                 val message = value?.toString(Charsets.UTF_8)
                 Log.d(TAG, "onCharacteristicWriteRequest: Have message: \"$message\"")
                 message?.let { _messages.postValue(Message.RemoteMessage(it)) }
             } else if (characteristic?.uuid == Constants.MESSAGE_UUID2) {
-                gattServer?.sendResponse(device, requestId, BluetoothGatt.GATT_SUCCESS, 0, null)
+                gattServer2?.sendResponse(device, requestId, BluetoothGatt.GATT_SUCCESS, 0, null)
+                val message = value?.toString(Charsets.UTF_8)
+                Log.d(TAG, "onCharacteristicWriteRequest: Have message: \"$message\"")
+                message?.let {
+                    _messages.postValue(Message.RemoteMessage(it))
+                }
+            }
+        }
+
+    }
+
+    private class GattServerCallback2 : BluetoothGattServerCallback() {
+        override fun onConnectionStateChange(device: BluetoothDevice?, status: Int, newState: Int) {
+            super.onConnectionStateChange(device, status, newState)
+            val isSuccess = status == BluetoothGatt.GATT_SUCCESS
+            val isConnected = newState == BluetoothGatt.STATE_CONNECTED
+            Log.d(
+                TAG,
+                "onConnectionStateChange: Server $device ${device?.name} success: $isSuccess connected: $isConnected"
+            )
+            if (isSuccess && isConnected) {
+                _connectionRequest.postValue(device)
+                Log.d(TAG, "onConnectionStateChange: Server connected")
+            } else {
+                Log.d(TAG, "onConnectionStateChange: Server Disconnected")
+                _deviceConnection.postValue(DeviceConnectionState.Disconnected)
+            }
+
+        }
+
+        override fun onCharacteristicWriteRequest(
+            device: BluetoothDevice?,
+            requestId: Int,
+            characteristic: BluetoothGattCharacteristic?,
+            preparedWrite: Boolean,
+            responseNeeded: Boolean,
+            offset: Int,
+            value: ByteArray?
+        ) {
+            super.onCharacteristicWriteRequest(
+                device,
+                requestId,
+                characteristic,
+                preparedWrite,
+                responseNeeded,
+                offset,
+                value
+            )
+            if (characteristic?.uuid == Constants.MESSAGE_UUID1) {
+                gattServer1?.sendResponse(device, requestId, BluetoothGatt.GATT_SUCCESS, 0, null)
+                val message = value?.toString(Charsets.UTF_8)
+                Log.d(TAG, "onCharacteristicWriteRequest: Have message: \"$message\"")
+                message?.let { _messages.postValue(Message.RemoteMessage(it)) }
+            } else if (characteristic?.uuid == Constants.MESSAGE_UUID2) {
+                gattServer2?.sendResponse(device, requestId, BluetoothGatt.GATT_SUCCESS, 0, null)
                 val message = value?.toString(Charsets.UTF_8)
                 Log.d(TAG, "onCharacteristicWriteRequest: Have message: \"$message\"")
                 message?.let {
@@ -333,7 +446,7 @@ object BluetoothServer {
 
             val messageBytes = message.toByteArray(Charsets.UTF_8)
             characterstic.value = messageBytes
-            gatt?.let {
+            gatt1?.let {
                 val success = it.writeCharacteristic(messageCharacteristic1)
                 Log.d(TAG, "onServicesDiscovered: message send: $success")
 
@@ -353,7 +466,7 @@ object BluetoothServer {
 
             val messageBytes = message.toByteArray(Charsets.UTF_8)
             characterstic.value = messageBytes
-            gatt?.let {
+            gatt2?.let {
                 val success = it.writeCharacteristic(messageCharacteristic2)
                 Log.d(TAG, "onServicesDiscovered: message send: $success")
 
