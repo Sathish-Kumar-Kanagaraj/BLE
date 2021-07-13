@@ -140,8 +140,8 @@ class PodScanActivity : AppCompatActivity() {
 
             for(item in scanResults.values.toList()){
                 bluetoothDevice = item
-                Toast.makeText(this, "Connected with " +
-                        item.name, Toast.LENGTH_LONG).show()
+              /*  Toast.makeText(this, "Connected with " +
+                        item.name, Toast.LENGTH_LONG).show()*/
                 Log.i(TAG,"Device Name:"+item.name)
                 bluetoothDevice = item
                 BluetoothServer.setCurrentChatConnection(bluetoothDevice)

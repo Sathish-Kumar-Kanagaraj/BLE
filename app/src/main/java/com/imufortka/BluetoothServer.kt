@@ -133,13 +133,13 @@ object BluetoothServer {
         if (isScanner1) {
             val dataBuilder = AdvertiseData.Builder()
                 .addServiceUuid(ParcelUuid(Constants.SERVICE_UUID1))
-                .setIncludeDeviceName(true)
+                .setIncludeDeviceName(false)
             return dataBuilder.build()
 
         } else {
             val dataBuilder = AdvertiseData.Builder()
                 .addServiceUuid(ParcelUuid(Constants.SERVICE_UUID2))
-                .setIncludeDeviceName(true)
+                .setIncludeDeviceName(false)
             return dataBuilder.build()
         }
 
